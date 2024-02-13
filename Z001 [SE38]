@@ -5,7 +5,8 @@
 *&---------------------------------------------------------------------*
 PROGRAM Z001.
 
-DATA: OKCODE100 TYPE SY-UCOMM.
+DATA: OKCODE100 TYPE SY-UCOMM,
+      OKCODE200 TYPE SY-UCOMM.
 
 "[LOGIN_SCREEN]
 INCLUDE Z001_BEFORE_LOGINO01.

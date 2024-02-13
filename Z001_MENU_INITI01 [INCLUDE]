@@ -8,8 +8,11 @@
 *----------------------------------------------------------------------*
 MODULE MENU_INIT INPUT.
 
-IF OKCODE200 EQ 'FCT_EXIT200'.
+CASE OKCODE200.
+  WHEN 'FCT_INSERTMENU'.
+    CALL SCREEN '300'.
+  WHEN 'FCT_EXIT200'.
     LEAVE PROGRAM.
-  ENDIF.
+ENDCASE.
 
 ENDMODULE.

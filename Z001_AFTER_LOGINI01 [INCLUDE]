@@ -8,10 +8,23 @@
 *----------------------------------------------------------------------*
 MODULE AFTER_LOGIN INPUT.
 
-CALL FUNCTION 'ZLOGIN001'
-  EXPORTING
-    IN_LOGIN100          = IN_LOGIN100
-    IN_PASSWORD100       = IN_PASSWORD100
-    OKCODE100            = OKCODE100
-          .
+  DATA: LV_OK2 TYPE BOOL.
+  LV_OK2 = 'FALSE'.
+
+  CALL FUNCTION 'ZLOGIN001'
+    EXPORTING
+      IN_LOGIN100          = IN_LOGIN100
+      IN_PASSWORD100       = IN_PASSWORD100
+      OKCODE100            = OKCODE100
+    IMPORTING
+      LV_OK                = LV_OK2
+            .
+
+    IF LV_OK2 EQ 'X'.
+      CALL SCREEN '200'.
+      MESSAGE |'INVALID PASSWORD: | TYPE 'S' DISPLAY LIKE 'I'.
+    ELSE.
+      MESSAGE |'NAO FUNCIONA: | TYPE 'S' DISPLAY LIKE 'I'.
+    ENDIF.
+
 ENDMODULE.

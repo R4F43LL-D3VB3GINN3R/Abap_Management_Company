@@ -1,3 +1,5 @@
+DATA: LV_ATTEMPTS TYPE I.
+
 FUNCTION ZLOGIN001.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
@@ -6,10 +8,6 @@ FUNCTION ZLOGIN001.
 *"     REFERENCE(IN_PASSWORD100) TYPE  C
 *"     REFERENCE(OKCODE100) TYPE  SY-UCOMM
 *"----------------------------------------------------------------------
-
-DATA LV_ATTEMPTS TYPE I.
-
-LV_ATTEMPTS = 0.
 
 CASE OKCODE100.
     WHEN 'FCT_EXIT100'.

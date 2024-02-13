@@ -5,36 +5,7 @@
 *&---------------------------------------------------------------------*
 PROGRAM Z001.
 
-DATA: OKCODE100 TYPE SY-UCOMM,
-      LV_ATTEMPTS TYPE I.
+DATA: OKCODE100 TYPE SY-UCOMM.
 
-*&---------------------------------------------------------------------*
-*& Module BEFORE_LOGIN OUTPUT
-*&---------------------------------------------------------------------*
-*&
-*&---------------------------------------------------------------------*
-MODULE BEFORE_LOGIN OUTPUT.
-* SET PF-STATUS 'xxxxxxxx'.
-* SET TITLEBAR 'xxx'.
-
- DATA: IN_LOGIN100     TYPE C LENGTH 20,
-       IN_PASSWORD100  TYPE C LENGTH 20.
-
-ENDMODULE.
-
-
-*&---------------------------------------------------------------------*
-*&      Module  AFTER_LOGIN  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-MODULE AFTER_LOGIN INPUT.
-
-CALL FUNCTION 'ZLOGIN001'
-  EXPORTING
-    IN_LOGIN100          = IN_LOGIN100
-    IN_PASSWORD100       = IN_PASSWORD100
-    OKCODE100            = OKCODE100
-          .
-
-ENDMODULE.
+INCLUDE z001_before_logino01.
+INCLUDE z001_after_logini01.

@@ -2,8 +2,27 @@
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  
 [FIELD]   [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
-MANDT       X         MANDT            CLNT           3               CLIENT
+MANDT       X         MANDT            CLNT           3               Client
 LOGIN                 ZLOGIN_100       CHAR           20              Login Admin
 PASSWORD              ZPASSWORD_100    CHAR           20              Password Admin
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+
+[TRANSPARENT TABLE -- ZEMPLOYEES001]  
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+[FIELD]   [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
+MANDT       X         MANDT            CLNT           3               Client
+ID          X         ZID              INT1           3               Id Employee
+NAME                  ZNAME            CHAR           60              Name Employee
+EMAIL                 ZEMAIL           CHAR           100             Email Employee
+SEX                   ZSEX             CHAR           10              Sex Employee
+AGE                   ZAGE             IN1            3               Age Employee
+ADDRESS               ZADDRESS         CHAR           150             Address Employee
+PHONE                 ZPHONE           CHAR           12              Phone Employee
+JOB                   ZJOB             CHAR           15              Job Employee
+HIRING                ZHIRING          DATS           8               Date Hiring Emp
+PAYMENT               ZPAYMENT         CHAR           10              Payment Situation
+SALARY                ZSALARY          DF16_DEC       8               Current Salary
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  

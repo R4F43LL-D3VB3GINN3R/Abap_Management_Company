@@ -15,22 +15,22 @@ FUNCTION ZINSERT001.
 *"     REFERENCE(IN_SALARY) TYPE  ZSALARY
 *"----------------------------------------------------------------------
 
-DATA: LS_EMP TYPE ZEMPLOYEES001,
-      LT_EMP TYPE TABLE OF ZEMPLOYEES001.
+DATA: LS_EMP TYPE ZEMPLOYEES001,          "Estrutura Local do tipo da Tabela Transparente."
+      LT_EMP TYPE TABLE OF ZEMPLOYEES001. "Tabela interna do tipo da Tabela Transparente."
 
-LS_EMP-ID = IN_ID.
-      LS_EMP-NAME = IN_NAME.
-      LS_EMP-EMAIL = IN_EMAIL.
-      LS_EMP-SEX = IN_SEX.
-      LS_EMP-AGE = IN_AGE.
-      LS_EMP-ADDRESS = IN_ADDRESS.
-      LS_EMP-PHONE = IN_PHONE.
-      LS_EMP-JOB = IN_JOB.
-      LS_EMP-HIRING = IN_HIRING.
-      LS_EMP-PAYMENT = IN_PAYMENT.
-      LS_EMP-SALARY = IN_SALARY.
+LS_EMP-ID = IN_ID.                 "Campo da estrutura recebe o input."
+      LS_EMP-NAME = IN_NAME.       "Campo da estrutura recebe o input."
+      LS_EMP-EMAIL = IN_EMAIL.     "Campo da estrutura recebe o input."
+      LS_EMP-SEX = IN_SEX.         "Campo da estrutura recebe o input."
+      LS_EMP-AGE = IN_AGE.         "Campo da estrutura recebe o input."
+      LS_EMP-ADDRESS = IN_ADDRESS. "Campo da estrutura recebe o input."
+      LS_EMP-PHONE = IN_PHONE.     "Campo da estrutura recebe o input."
+      LS_EMP-JOB = IN_JOB.         "Campo da estrutura recebe o input."
+      LS_EMP-HIRING = IN_HIRING.   "Campo da estrutura recebe o input."
+      LS_EMP-PAYMENT = IN_PAYMENT. "Campo da estrutura recebe o input."
+      LS_EMP-SALARY = IN_SALARY.   "Campo da estrutura recebe o input."
 
-APPEND LS_EMP TO LT_EMP.
-MODIFY ZEMPLOYEES001 FROM TABLE LT_EMP.
+APPEND LS_EMP TO LT_EMP.                "Insere estrutura na tabela interna."
+MODIFY ZEMPLOYEES001 FROM TABLE LT_EMP. "Insere os dados da tabela interna na tabela transparente."
 
 ENDFUNCTION.

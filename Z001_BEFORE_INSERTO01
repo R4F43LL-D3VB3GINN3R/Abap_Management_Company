@@ -1,0 +1,24 @@
+*----------------------------------------------------------------------*
+***INCLUDE Z001_BEFORE_INSERTO01.
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*& Module BEFORE_INSERT OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE BEFORE_INSERT OUTPUT.
+* SET PF-STATUS 'xxxxxxxx'.
+* SET TITLEBAR 'xxx'.
+
+  DATA: IN_NAME TYPE ZNAME,
+        IN_EMAIL TYPE ZEMAIL,
+        IN_SEX TYPE ZSEX,
+        IN_AGE TYPE ZAGE,
+        IN_ADDRESS TYPE ZADDRESS,
+        IN_PHONE TYPE ZPHONE,
+        IN_JOB TYPE ZJOB,
+        IN_HIRING TYPE ZHIRING,
+        IN_PAYMENT TYPE ZPAYMENT,
+        IN_SALARY TYPE ZSALARY.
+
+ENDMODULE.

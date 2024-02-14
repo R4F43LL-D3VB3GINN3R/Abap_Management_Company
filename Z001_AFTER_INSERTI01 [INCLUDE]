@@ -8,9 +8,25 @@
 *----------------------------------------------------------------------*
 MODULE AFTER_INSERT INPUT.
 
-  CASE OKCODE300.
-    WHEN 'FCT_EXIT300'.
-      LEAVE PROGRAM.
-  ENDCASE.
+  CASE OKCODE300.         "Caso variável de função de sistema...
+    WHEN 'FCT_EXIT300'.   "Quando a função do sistema for...
+      LEAVE PROGRAM.      "Encerrar programa.
+    WHEN 'FCT_INSERT300'. "Quando a função do sistema for...
+
+      CALL FUNCTION 'ZINSERT001' "Invoca função para cadastrar funcionário.
+        EXPORTING
+          IN_ID            = IN_ID
+          IN_NAME          = IN_NAME
+          IN_EMAIL         = IN_EMAIL
+          IN_SEX           = IN_SEX
+          IN_AGE           = IN_AGE
+          IN_ADDRESS       = IN_ADDRESS
+          IN_PHONE         = IN_PHONE
+          IN_JOB           = IN_JOB
+          IN_HIRING        = IN_HIRING
+          IN_PAYMENT       = IN_PAYMENT
+          IN_SALARY        = IN_SALARY.
+
+  ENDCASE. "Encerra o Case.
 
 ENDMODULE.

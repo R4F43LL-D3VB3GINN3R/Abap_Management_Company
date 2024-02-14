@@ -26,6 +26,9 @@ MODULE AFTER_INSERT INPUT.
           IN_HIRING        = IN_HIRING
           IN_PAYMENT       = IN_PAYMENT
           IN_SALARY        = IN_SALARY.
+      
+      WHEN 'FCT_BACK300'.
+        CALL SCREEN '200'.
 
   ENDCASE. "Encerra o Case.
 

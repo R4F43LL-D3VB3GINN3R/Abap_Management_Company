@@ -2,7 +2,6 @@ FUNCTION ZINSERT001.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
-*"     REFERENCE(IN_ID) TYPE  ZID
 *"     REFERENCE(IN_NAME) TYPE  ZNAME
 *"     REFERENCE(IN_EMAIL) TYPE  ZEMAIL
 *"     REFERENCE(IN_SEX) TYPE  ZSEX
@@ -15,10 +14,12 @@ FUNCTION ZINSERT001.
 *"     REFERENCE(IN_SALARY) TYPE  ZSALARY
 *"----------------------------------------------------------------------
 
-DATA: LS_EMP TYPE ZEMPLOYEES001,          "Estrutura Local do tipo da Tabela Transparente."
-      LT_EMP TYPE TABLE OF ZEMPLOYEES001. "Tabela interna do tipo da Tabela Transparente."
+DATA: LS_EMP TYPE ZEMPLOYEES001,           "Estrutura Local do tipo da Tabela Transparente."
+      LT_EMP TYPE TABLE OF ZEMPLOYEES001.  "Tabela interna do tipo da Tabela Transparente."
 
-LS_EMP-ID = IN_ID.                 "Campo da estrutura recebe o input."
+      SELECT SINGLE MAX( ID ) INTO LS_EMP-ID FROM ZEMPLOYEES001. "Seleciono o maior número deste campo e o coloco dentro do campo da minha estrutura.
+      LS_EMP-ID = LS_EMP-ID + 1.                                 "Depois incremento o valor.
+
       LS_EMP-NAME = IN_NAME.       "Campo da estrutura recebe o input."
       LS_EMP-EMAIL = IN_EMAIL.     "Campo da estrutura recebe o input."
       LS_EMP-SEX = IN_SEX.         "Campo da estrutura recebe o input."

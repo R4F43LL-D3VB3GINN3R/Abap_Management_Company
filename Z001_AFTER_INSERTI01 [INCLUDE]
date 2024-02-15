@@ -26,10 +26,10 @@ MODULE AFTER_INSERT INPUT.
           IN_PAYMENT       = IN_PAYMENT
           IN_SALARY        = IN_SALARY.
 
-      WHEN 'FCT_BACK300'.  "Quando a função do sistema for...
+     WHEN 'FCT_BACK300'.  "Quando a função do sistema for...
         CALL SCREEN '200'. "Chama a tela de menu."
 
-      WHEN 'FCT_DISPLAY300'.
+     WHEN 'FCT_DISPLAY300'.
 
         DATA: REPORTALV TYPE REF TO CL_SALV_TABLE,     "VARIÁVEL QUE FAZ REFERÊNCIA AO OBJETO DA CLASSE CL_SALV_TABLE."
               FUNCTIONS TYPE REF TO CL_SALV_FUNCTIONS. "VARIÁVEL QUE VAI ARMAZENAR A REFERÊNCIA AO OBJETO DA CLASSE CL_SALV_FUNCTIONS."
@@ -52,6 +52,18 @@ MODULE AFTER_INSERT INPUT.
           MESSAGE 'ERROR TO DISPLAY ALV REPORT!' TYPE 'S' DISPLAY LIKE 'I'. "...UMA MENSAGEM DE ERRO"
       ENDTRY.
 
+     WHEN 'FCT_CLEAR300'. "Quando a função do sistema for...
+       CLEAR: IN_ID,
+              IN_NAME,
+              IN_EMAIL,
+              IN_SEX,
+              IN_AGE,
+              IN_ADDRESS,
+              IN_PHONE,
+              IN_JOB,
+              IN_HIRING,
+              IN_PAYMENT,
+              IN_SALARY. "Limpa todos os campos.
 
   ENDCASE. "Encerra o Case.
 

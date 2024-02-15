@@ -15,7 +15,6 @@ MODULE AFTER_INSERT INPUT.
 
       CALL FUNCTION 'ZINSERT001' "Invoca função para cadastrar funcionário.
         EXPORTING
-          IN_ID            = IN_ID
           IN_NAME          = IN_NAME
           IN_EMAIL         = IN_EMAIL
           IN_SEX           = IN_SEX
@@ -26,9 +25,33 @@ MODULE AFTER_INSERT INPUT.
           IN_HIRING        = IN_HIRING
           IN_PAYMENT       = IN_PAYMENT
           IN_SALARY        = IN_SALARY.
-      
-      WHEN 'FCT_BACK300'.
-        CALL SCREEN '200'.
+
+      WHEN 'FCT_BACK300'.  "Quando a função do sistema for...
+        CALL SCREEN '200'. "Chama a tela de menu."
+
+      WHEN 'FCT_DISPLAY300'.
+
+        DATA: REPORTALV TYPE REF TO CL_SALV_TABLE,     "VARIÁVEL QUE FAZ REFERÊNCIA AO OBJETO DA CLASSE CL_SALV_TABLE."
+              FUNCTIONS TYPE REF TO CL_SALV_FUNCTIONS. "VARIÁVEL QUE VAI ARMAZENAR A REFERÊNCIA AO OBJETO DA CLASSE CL_SALV_FUNCTIONS."
+
+        DATA: LT_EMP TYPE TABLE OF ZEMPLOYEES001.      "TABELA INTERNA"
+        SELECT * FROM ZEMPLOYEES001 INTO TABLE LT_EMP. "SELECIONO TODOS OS DADOS DA MINHA TABELA TRANSPARENTE NA MINHA TABELA INTERNA."
+
+         TRY.                                                               "TENTE
+          CALL METHOD CL_SALV_TABLE=>FACTORY                                "CHAMADA DO MÉTODO DA CLASSE DE MANIPULAÇÃOO ALV PARA EXIBIR O RELATÓRIO."
+            IMPORTING
+              R_SALV_TABLE = REPORTALV                                      "A VARIÁVEL DE REFERÊNCIA À CLASSE CL_SALV_TABLE É IMPORTADA."
+            CHANGING
+              T_TABLE      = LT_EMP.                                        "MINHA TABELA INTERNA É ALTERADA COM A CLÁUSULA CHANGING DO MÉTODO."
+
+          FUNCTIONS = REPORTALV->GET_FUNCTIONS( ).                          "OBTER AS FUNÇÕES DISPONÍVEIS PARA O RELATÓRIO ALV."
+          FUNCTIONS->SET_ALL( ABAP_TRUE ).                                  "QUE TODAS AS FUNÇÕES ESTEJAM DISPONÍVEIS."
+
+          CALL METHOD REPORTALV->DISPLAY( ).                                "CHAMADA DO MÉTODO PARA EXIBIR O RELATÓRIO ALV."
+        CATCH CX_SALV_MSG.                                                  "CASO HAJA ALGUM PROBLEMA, SUBSTITUA O TRECHO ANTERIOR DO CÓDIGO POR...
+          MESSAGE 'ERROR TO DISPLAY ALV REPORT!' TYPE 'S' DISPLAY LIKE 'I'. "...UMA MENSAGEM DE ERRO"
+      ENDTRY.
+
 
   ENDCASE. "Encerra o Case.
 

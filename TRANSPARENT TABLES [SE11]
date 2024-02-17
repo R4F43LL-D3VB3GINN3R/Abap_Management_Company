@@ -23,6 +23,6 @@ PHONE                 ZPHONE           CHAR           12              Phone Empl
 JOB                   ZJOB             CHAR           15              Job Employee
 HIRING                ZHIRING          DATS           8               Date Hiring Emp
 PAYMENT               ZPAYMENT         CHAR           10              Payment Situation
-SALARY                ZSALARY          DF16_DEC       8               Current Salary
+SALARY                ZSALARY          DEC            8               Current Salary
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  

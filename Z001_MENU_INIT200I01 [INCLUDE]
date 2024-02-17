@@ -1,18 +1,18 @@
 *----------------------------------------------------------------------*
-***INCLUDE Z001_MENU_INITI01.
+***INCLUDE Z001_MENU_INIT200I01.
 *----------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*&      Module  MENU_INIT  INPUT
+*&      Module  MENU_INIT200  INPUT
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
-MODULE MENU_INIT INPUT.
+MODULE MENU_INIT200 INPUT.
 
-CASE OKCODE200.
-  WHEN 'FCT_INSERTMENU200'.
-    CALL SCREEN '300'.
-  WHEN 'FCT_EXIT200'.
-    LEAVE PROGRAM.
-ENDCASE.
+  CASE OKCODE200.
+    WHEN 'FCT_INSERTMENU200'.
+      CALL SCREEN '300'.
+    WHEN 'FCT_EXIT200'.
+      LEAVE PROGRAM.
+  ENDCASE.
 
 ENDMODULE.

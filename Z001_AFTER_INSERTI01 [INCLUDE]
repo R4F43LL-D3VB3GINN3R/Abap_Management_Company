@@ -53,8 +53,7 @@ MODULE AFTER_INSERT INPUT.
       ENDTRY.
 
      WHEN 'FCT_CLEAR300'. "Quando a função do sistema for...
-       CLEAR: IN_ID,
-              IN_NAME,
+       CLEAR: IN_NAME,
               IN_EMAIL,
               IN_SEX,
               IN_AGE,

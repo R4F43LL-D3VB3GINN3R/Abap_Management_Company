@@ -37,6 +37,19 @@ MODULE UNLOCK_SYSTEM_LOAD INPUT.
         APPEND T_DATA.
       ENDLOOP.
 
+      APPEND 'MANDT' TO T_HEADER.
+      APPEND 'ID' TO T_HEADER.
+      APPEND 'NAME' TO T_HEADER.
+      APPEND 'EMAIL' TO T_HEADER.
+      APPEND 'SEX' TO T_HEADER.
+      APPEND 'AGE' TO T_HEADER.
+      APPEND 'ADDRESS' TO T_HEADER.
+      APPEND 'PHONE' TO T_HEADER.
+      APPEND 'JOB' TO T_HEADER.
+      APPEND 'HIRING' TO T_HEADER.
+      APPEND 'PAYMENT' TO T_HEADER.
+      APPEND 'SALARY' TO T_HEADER.
+
       DATA: LV_FILENAME TYPE STRING,
             LV_PATH TYPE STRING,
             LV_FULLPATH TYPE STRING,
@@ -66,10 +79,11 @@ MODULE UNLOCK_SYSTEM_LOAD INPUT.
           FILETYPE                        = 'DAT'
         TABLES
           DATA_TAB                        = LT_DATA
-          FIELDNAMES                      = T_DATA.
-                
+          FIELDNAMES                      = T_HEADER.
+
       ELSE.
         MESSAGE |'INVALID PARAMETERS: | TYPE 'S' DISPLAY LIKE 'I'.
       ENDIF.
+
 
 ENDMODULE.

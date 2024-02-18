@@ -8,8 +8,8 @@
 *----------------------------------------------------------------------*
 MODULE UNLOCK_SYSTEM_LOAD INPUT.
 
-  DATA: LV_OK3 TYPE BOOL.
-   LV_OK3 = 'FALSE'.
+    DATA: LV_OK3 TYPE BOOL.
+    LV_OK3 = 'FALSE'.
 
   CALL FUNCTION 'ZUNLOCK001'
     EXPORTING
@@ -19,12 +19,57 @@ MODULE UNLOCK_SYSTEM_LOAD INPUT.
     IMPORTING
       LV_OK                = LV_OK3
             .
-
     IF LV_OK3 EQ 'X'.
-      CALL SCREEN '300'.
-      MESSAGE |'INVALID PASSWORD: | TYPE 'S' DISPLAY LIKE 'I'.
-    ELSE.
-      MESSAGE |'NAO FUNCIONA: | TYPE 'S' DISPLAY LIKE 'I'.
-    ENDIF.
+
+      TYPES: WA_DATA TYPE ZEMPLOYEES001.
+      DATA: T_DATA TYPE WA_DATA OCCURS 0 WITH HEADER LINE.
+      DATA: LT_DATA TYPE TABLE OF ZEMPLOYEES001.
+
+      SELECT * FROM ZEMPLOYEES001 INTO TABLE LT_DATA.
+
+      DATA: BEGIN OF WA_HEADER,
+        NAME TYPE C LENGTH 30,
+      END OF WA_HEADER.
+
+      DATA: T_HEADER LIKE TABLE OF WA_HEADER.
+
+      LOOP AT LT_DATA INTO T_DATA.
+        APPEND T_DATA.
+      ENDLOOP.
+
+      DATA: LV_FILENAME TYPE STRING,
+            LV_PATH TYPE STRING,
+            LV_FULLPATH TYPE STRING,
+            LV_RESULT TYPE I,
+            LV_DEFAULT TYPE STRING,
+            LV_FNAME TYPE STRING.
+
+      LV_FILENAME = 'EMPLOYEES'.
+
+      CALL METHOD CL_GUI_FRONTEND_SERVICES=>FILE_SAVE_DIALOG
+        EXPORTING
+          WINDOW_TITLE = 'FILE DIRECTORY'
+          DEFAULT_EXTENSION = 'XLS'
+          INITIAL_DIRECTORY = 'C:\'
+        CHANGING
+          FILENAME = LV_FILENAME
+          PATH = LV_PATH
+          FULLPATH = LV_FULLPATH
+          USER_ACTION = LV_RESULT.
+
+      LV_FNAME = LV_FULLPATH.
+
+      CALL FUNCTION 'GUI_DOWNLOAD'
+        EXPORTING
+          BIN_FILESIZE                    = ''
+          FILENAME                        = LV_FNAME
+          FILETYPE                        = 'DAT'
+        TABLES
+          DATA_TAB                        = LT_DATA
+          FIELDNAMES                      = T_DATA.
+                
+      ELSE.
+        MESSAGE |'INVALID PARAMETERS: | TYPE 'S' DISPLAY LIKE 'I'.
+      ENDIF.
 
 ENDMODULE.

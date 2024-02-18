@@ -64,6 +64,9 @@ MODULE AFTER_INSERT INPUT.
               IN_PAYMENT,
               IN_SALARY. "Limpa todos os campos.
 
+      WHEN 'FCT_EXPORT300'.
+        CALL SCREEN '101'.
+
   ENDCASE. "Encerra o Case.
 
 ENDMODULE.

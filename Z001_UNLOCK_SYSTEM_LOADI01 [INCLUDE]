@@ -8,4 +8,23 @@
 *----------------------------------------------------------------------*
 MODULE UNLOCK_SYSTEM_LOAD INPUT.
 
+  DATA: LV_OK3 TYPE BOOL.
+   LV_OK3 = 'FALSE'.
+
+  CALL FUNCTION 'ZUNLOCK001'
+    EXPORTING
+      IN_LOGIN101          = IN_LOGIN101
+      IN_PASSWORD101       = IN_PASSWORD101
+      OKCODE101            = OKCODE101
+    IMPORTING
+      LV_OK                = LV_OK3
+            .
+
+    IF LV_OK3 EQ 'X'.
+      CALL SCREEN '300'.
+      MESSAGE |'INVALID PASSWORD: | TYPE 'S' DISPLAY LIKE 'I'.
+    ELSE.
+      MESSAGE |'NAO FUNCIONA: | TYPE 'S' DISPLAY LIKE 'I'.
+    ENDIF.
+
 ENDMODULE.

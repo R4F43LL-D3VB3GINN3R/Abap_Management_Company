@@ -3,9 +3,10 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-PROGRAM Z001.
+PROGRAM Z001. "MAIN"
 
-DATA: OKCODE100 TYPE SY-UCOMM,
+"VARIÁVEIS DE FUNÇÃO DO SISTEMA"
+DATA: OKCODE100 TYPE SY-UCOMM, 
       OKCODE200 TYPE SY-UCOMM,
       OKCODE300 TYPE SY-UCOMM,
       OKCODE101 TYPE SY-UCOMM.

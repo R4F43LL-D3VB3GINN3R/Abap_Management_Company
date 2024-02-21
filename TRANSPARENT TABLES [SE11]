@@ -14,6 +14,7 @@ PASSWORD              ZPASSWORD_100    CHAR           20              Password A
 [FIELD]   [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
 MANDT       X         MANDT            CLNT           3               Client
 ID          X         ZID              INT1           3               Id Employee
+ID_PAYROLL  X         ZID
 NAME                  ZNAME            CHAR           60              Name Employee
 EMAIL                 ZEMAIL           CHAR           100             Email Employee
 SEX                   ZSEX             CHAR           10              Sex Employee

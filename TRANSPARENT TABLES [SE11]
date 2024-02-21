@@ -26,3 +26,24 @@ PAYMENT               ZPAYMENT         CHAR           10              Payment Si
 SALARY                ZSALARY          DEC            8               Current Salary
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  
+
+[TRANSPARENT TABLE -- ZPAYROLLTABLE]  
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+[FIELD]     [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
+MANDT         X         MANDT            CLNT           3               Client
+ID            X         ZID              INT1           3               Id Employee
+BRUTESAL                ZBRUTESAL        DEC            3               Brute Salary
+LIQSAL                  ZLIQSAL          DEC            3               Liquid Salary
+HEALTHPLAN              ZHEALTHPLAN      CHAR           1               Health Plan
+SINDICAL                ZSINDICAL        CHAR           1               Sindical Services
+TRANSPORT               ZTRANSPORT       CHAR           1               Ticket Transport
+EXTRAHOUR               ZEXTRAHOUR       DEC            3               Extra Hour
+DEDUCTIONS              ZDEDUCTIONS      DEC            3               Deductions
+SECSOCIAL               ZSECOSCIAL       DEC            3               Security Social
+IRS                     ZIRS             DEC            3               IRS
+BONUS                   ZBONUS           DEC            3               Bonus
+SUBHOLYDAYS             ZSUBHOLYDAYS     DEC            1               Holydays
+NOPAYLEAVE              ZNOPAYLEAVE      INT1           3               No Pay Leave
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  

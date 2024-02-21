@@ -64,8 +64,8 @@ MODULE AFTER_INSERT INPUT.
               IN_PAYMENT,
               IN_SALARY. "Limpa todos os campos.
 
-      WHEN 'FCT_EXPORT300'.
-        CALL SCREEN '101'.
+      WHEN 'FCT_EXPORT300'.                     "QUANDO O BOTÃO DE EXPORTAR ARQUIVO FOR PRESSIONADO..."
+        CALL SCREEN '101' STARTING AT 10 10.    "CHAMA A TELA DE PERMISSÕES."
 
   ENDCASE. "Encerra o Case.
 

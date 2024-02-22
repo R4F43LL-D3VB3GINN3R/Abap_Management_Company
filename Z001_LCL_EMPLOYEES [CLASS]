@@ -80,7 +80,19 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
         NOPAYLEAVE TYPE ZNOPAYLEAVE
         LV_SAL     TYPE DECIMALS
       EXPORTING
-        DEDUCTIONS TYPE ZDEDUCTIONS.     "EXPORTA AS DEDUÇÕES SALARIAIS."
+        DEDUCTIONS TYPE ZDEDUCTIONS,     "EXPORTA AS DEDUÇÕES SALARIAIS."
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      CALCULATE_SAL                       "MÉTODO PARA CALCULAR O SALÁRIO LÍQUIDO."
+      IMPORTING                           "IMPORTA TRIBUTAÇÕES E BONUS."
+        LV_SAL TYPE DECIMALS
+        DEDUCTIONS TYPE ZDEDUCTIONS
+        BONUS TYPE ZBONUS
+      EXPORTING
+        LIQSAL TYPE ZLIQSAL.              "EXPORTA O SALÁRIO FINAL."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -299,7 +311,22 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
 
       DEDUCTIONS = DEDUCTIONS + LV_HOURSLATE. "ESTE VALOR É ADICIONADO AO VALOR DAS DEDUÇÕES SALARIAIS."
 
-    ENDMETHOD.
+  ENDMETHOD.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+
+  METHOD CALCULATE_SAL. "MÉTODO PARA CALCULAR O SALÁRIO LÍQUIDO."
+
+    "IMPORTA O SALÁRIO BRUTO."
+    "IMPORTA AS DEDUÇÕES SALARIAIS."
+    "IMPORTA OS BONUS SALARIAIS."
+
+    "EXPORTA O SALÁRIO LÍQUIDO."
+
+    LIQSAL = ( LIQSAL + BRUTESAL + BONUS ) - DEDUCTIONS. "CÁLCULO BÁSICO PARA CONSTAR SALÁRIO FINAL."
+
+  ENDMETHOD.
 
 "-----------------------------------------------------------------------------------------------"
 "-----------------------------------------------------------------------------------------------"

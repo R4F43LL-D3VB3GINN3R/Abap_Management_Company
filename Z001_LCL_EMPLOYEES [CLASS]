@@ -10,13 +10,33 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
 
   PUBLIC SECTION. "TODOS OS MÉTODOS DESTA CLASSE SERÃO PÚBLICOS."
 
-      METHODS: WORK_SHIFT         "MÉTODO PARA CÁLCULO DO BONUS SALARIAL DEVIDO AO TURNO DE TRABALHO."
-      IMPORTING                   "IMPORTA  TURNO DE TRABALHO E O SALÁRIO BASE....
+      METHODS:
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      WORK_SHIFT                  "MÉTODO PARA CÁLCULO DO BONUS SALARIAL DEVIDO AO TURNO DE TRABALHO."
+      IMPORTING                   "IMPORTA  TURNO DE TRABALHO E O SALÁRIO BASE."
         WORKSHIFT TYPE ZWORKSHIFT
         LV_SAL TYPE DECIMALS
-      EXPORTING                   "EXPORTA O BONUS SALARIAL."
-        BONUS TYPE ZBONUS.
-      
+      EXPORTING
+        BONUS TYPE ZBONUS,        "EXPORTA O BONUS SALARIAL."
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      EXTRAHOURS                  "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS E ACRESCÊ-LO AO SALÁRIO BRUTO"
+      IMPORTING                   "IMPORTA O SALÁRIO BASE E A QUANTIDADE DE HORAS EXTRAS."
+        LV_SAL TYPE DECIMALS
+        EXTRAHOUR TYPE ZEXTRAHOUR
+      EXPORTING
+        BRUTESAL TYPE ZBRUTESAL.  "EXPORTA O SALÁRIO BRUTO."
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
 
   PRIVATE SECTION. "TODOS OS ATRIBUTOS DE CLASSE ESTÃO PRIVADOS E SERVEM MAIS COMO UM GUIÃO DE TRABALHO."
 
@@ -43,6 +63,13 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
 
   METHOD WORK_SHIFT. "MÉTODO PARA CALCULAR BONUS SALARIAL POR TURNO."
 
+    "IMPORTA O TURNO DE TRABALHO."
+    "IMPORTA O SALÁRIO BASE."
+
+    "EXPORTA O BONUS SALARIAL."
+
+    BONUS = '0.0'. "o BONUS É INICIALIZADO COMO ZERO."
+
     IF WORKSHIFT EQ 'NIGHT'.               "SE O TURNO FOR NOTURNO."
       BONUS = BONUS + ( '0.25' * LV_SAL ). "RECEBE O BONUS."
     ELSE.                                  "DO CONTRÁRIO...
@@ -50,32 +77,28 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
     ENDIF.                                 "ENCERRA CONDIÇÃO."
 
   ENDMETHOD.
-  
-  METHOD EXTRAHOURS.
-    
-    "AQUI VAMOS CALCULAR COMO O VALOR DAS HORAS EXTRAS VAI SE COMPORTAR DE ACORDO COM O TURNO TRABALHADO"
 
-      "RECEBE O VALOR INTEIRO DAS HORAS EXTRAS.
-      "RECEBE O VALOR DO SALARIO.
-      
-      DATA LV_VALHRS TYPE P DECIMALS 2. "VARIÁVEL RECEBE O VALOR DAS HORAS EXTRAS.
+  METHOD EXTRAHOURS. "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS.
 
-      LV_VALHRS = LV_ORDENADO / ( 8 * 22 ). "VALOR DA HORA = SALÁRIO BASE / ( 8 HORAS TRABALHADAS * 22 DIAS ÚTEIS DO MÊS).
+      "IMPORTA A QUANTIDADE DE HORAS EXTRAS TRABALHADAS."
+      "IMPORTA O SALÁRIO BASE."
 
-      IF LV_TURNO = 'DIURNO'.            "SE FOR DURANTE O DIA...
-        IN2_4 = IN2_4 * LV_VALHRS * 2.   "AS HORAS EXTRAS VALEM O DOBRO.
-      ELSEIF LV_TURNO = 'NOTURNO'.       "SE FOR DURANTE A NOITE...
-        IN2_4 = IN2_4 * LV_VALHRS * 3.   "AS HORAS EXTRAS VALEM O TRIPLO"
-      ELSE.                              "EM QUALQUER OUTRO CASO...
-        IN2_4 = IN2_4 * LV_VALHRS * 1.   "ELAS VALEM O QUE SÃO."
+      "EXPORTA O VALOR DAS HORAS EXTRAS."
+      "EXPORTA O SALÁRIO BRUTO."
+
+      DATA: LV_VALHR TYPE P DECIMALS 2,  "VARIÁVEL LOCAL RECEBE O VALOR DA HORA EXTRA.
+            LV_VALHRS TYPE P DECIMALS 2. "VARIÁVEL LOCAL RECEBE O VALOR DAS HORAS EXTRAS CALCULADAS.
+
+      LV_VALHR = LV_SAL / ( 8 * 22 ).   "VALOR DA HORA = SALÁRIO BASE / ( 8 HORAS TRABALHADAS * 22 DIAS ÚTEIS DO MÊS).
+
+      IF WORKSHIFT = 'DAY'.                                       "SE FOR DURANTE O DIA...
+        LV_VALHRS = LV_VALHRS + ( EXTRAHOUR * ( 2 * LV_VALHR ) ). "AS HORAS EXTRAS VALEM O DOBRO.
+      ELSE.                                                       "SE FOR DURANTE A NOITE...
+        LV_VALHRS = LV_VALHRS + ( EXTRAHOUR * ( 3 * LV_VALHR ) ). "AS HORAS EXTRAS VALEM O TRIPLO"
       ENDIF.
 
-      "PARA SE CALCULAR O VALOR TOTAL DAS HORAS EXTRAS A RECEBER...
-      "TOTAL DE HORAS EXTRAS = TOTAL DE HORAS EXTRAS * VALOR DA HORA DO FUNCIONÁRIO * TURNO TRABALHADO."
+      BRUTESAL = LV_SAL + LV_VALHRS. "APROVEITAMOS E DIZEMOS QUE O SALÁRIO BRUTO RECEBE O SALÁRIO BASE + O VALOR DAS HORAS EXTRAS."
 
-      LS_SAL-HORAEXTRA = IN2_4. "DIZEMOS ENTÃO QUE O VALOR TOTAL DAS HORAS EXTRAS EM MINHA ESTRUTURA RECEBE O RESULTADO CALCULADO DO PARÂMETRO."
-      LS_SAL-SALBRUTO = LV_ORDENADO + LS_SAL-HORAEXTRA. "APROVEITAMOS E DIZEMOS QUE O SALÁRIO BRUTO RECEBE O SALÁRIO BASE + O VALOR DAS HORAS EXTRAS."
-    
   ENDMETHOD.
 
 ENDCLASS.

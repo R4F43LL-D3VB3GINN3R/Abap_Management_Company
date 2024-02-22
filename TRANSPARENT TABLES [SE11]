@@ -25,6 +25,7 @@ JOB                   ZJOB             CHAR           15              Job Employ
 HIRING                ZHIRING          DATS           8               Date Hiring Emp
 PAYMENT               ZPAYMENT         CHAR           10              Payment Situation
 SALARY                ZSALARY          DEC            8               Current Salary
+WORKSHIFT             ZWORKSHIFT       CHAR           5               Work Shift
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  
 

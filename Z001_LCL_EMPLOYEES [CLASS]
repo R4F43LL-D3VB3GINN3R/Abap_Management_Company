@@ -19,9 +19,9 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       WORK_SHIFT                      "MÉTODO PARA CÁLCULO DO BONUS SALARIAL DEVIDO AO TURNO DE TRABALHO."
       IMPORTING                       "IMPORTA  TURNO DE TRABALHO E O SALÁRIO BASE."
         WORKSHIFT TYPE ZWORKSHIFT
-        LV_SAL TYPE DECIMALS
+        LV_SAL    TYPE DECIMALS
       EXPORTING
-        BONUS TYPE ZBONUS,            "EXPORTA O BONUS SALARIAL."
+            BONUS TYPE ZBONUS,        "EXPORTA O BONUS SALARIAL."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -29,10 +29,10 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
 
       EXTRAHOURS                      "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS E ACRESCÊ-LO AO SALÁRIO BRUTO"
       IMPORTING                       "IMPORTA O SALÁRIO BASE E A QUANTIDADE DE HORAS EXTRAS."
-        LV_SAL TYPE DECIMALS
+        LV_SAL    TYPE DECIMALS
         EXTRAHOUR TYPE ZEXTRAHOUR
       EXPORTING
-        BRUTESAL TYPE ZBRUTESAL,      "EXPORTA O SALÁRIO BRUTO."
+        BRUTESAL  TYPE ZBRUTESAL,     "EXPORTA O SALÁRIO BRUTO."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -40,11 +40,24 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
 
       HOLYDAYS_SUB                    "MÉTODO PARA CALCULAR SUBSÍDIO DÉCIMO E FÉRIAS."
       IMPORTING                       "IMPORTA O SALÁRIO BRUTO, O BASE E A OPÇÃO CHECKED OU NÃO DO SUBSÍDIO."
-        BRUTESAL TYPE ZBRUTESAL
-        LV_SAL TYPE DECIMALS
+        BRUTESAL    TYPE ZBRUTESAL
+        LV_SAL      TYPE DECIMALS
         SUBHOLYDAYS TYPE ZSUBHOLYDAYS
       EXPORTING
-        LIQSAL TYPE ZLIQSAL.          "EXPORTA O SALÁRIO LÍQUIDO."
+        LIQSAL      TYPE ZLIQSAL,     "EXPORTA O SALÁRIO LÍQUIDO."
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      SERVICES                         "MÉTODO PARA CALCULAR AS DESPESAS OU BONUS DE SERVIÇOS CONTRATADOS."
+      IMPORTING                        "IMPORTA OS SERVICOS."
+        HEALTHPLAN TYPE ZHEALTHPLAN
+        SINDICAL TYPE ZSINDICAL
+        TRANSPORT TYPE ZTRANSPORT
+      EXPORTING
+        DEDUCTIONS TYPE ZDEDUCTIONS    "EXPORTA A DEDUÇÃO SALARIAL E O BONUS."
+        BONUS TYPE ZBONUS.
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -77,7 +90,6 @@ ENDCLASS.
 
 CLASS CL_EMPLOYEES IMPLEMENTATION.
 
-"-----------------------------------------------------------------------------------------------"
 "-----------------------------------------------------------------------------------------------"
 
   METHOD WORK_SHIFT. "MÉTODO PARA CALCULAR BONUS SALARIAL POR TURNO."
@@ -144,8 +156,41 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
 
       LIQSAL = LIQSAL + LV_YSDF. "AO FINAL DO CÁLCULO SE SOMA A VARIÁVEL AO SALÁRIO LÍQUIDO."
 
-    ENDMETHOD.
-    
+  ENDMETHOD.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+
+  METHOD SERVICES. "MÉTODO PARA CALCULAR AS DESPESAS OU BONUS DE SERVIÇOS CONTRATADOS."
+
+    "IMPORTA O PLANO DE SAÚDE."
+    "IMPORTA A CONTRIBUIÇÃO SINDICAL."
+    "IMPORTA O TICKET TRANSPORTE."
+    "IMPORTA O SALÁRIO BASE."
+
+    "EXPORTA AS DEDUÇÕES SALARIAIS."
+    "EXPORTA O BONUS SALARIAL."
+
+      IF HEALTHPLAN = 'X'.                                                    "SE DECIDIR OPTAR POR UM PLANO DE SAÚDE PRIVADO...
+        DEDUCTIONS = DEDUCTIONS + ( ( 5 / 100 ) * LV_SAL ).                   "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
+      ELSE.                                                                   "DO CONTRÁRIO...
+        DEDUCTIONS = DEDUCTIONS.                                              "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
+      ENDIF.
+
+      IF SINDICAL = 'X'.                                                      "SE DECIDIR OPTAR POR UMA CONTRIBUIÇÃO SINDICAL...
+        DEDUCTIONS = DEDUCTIONS + 4.                                          "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
+      ELSE.                                                                   "DO CONTRÁRIO...
+        DEDUCTIONS = DEDUCTIONS.                                              "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
+      ENDIF.
+
+      IF TRANSPORT = 'X'.                                                     "SE DECIDIR OPTAR TICKET TRANSPORTE...
+        BONUS = BONUS + '100.00'.                                             "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DOS BONUS SALARIAIS
+      ELSE.                                                                   "DO CONTRÁRIO...
+        BONUS = BONUS.                                                        "OS BONUS PERMANECEM OS MESMOS."
+      ENDIF.
+
+  ENDMETHOD.
+
 "-----------------------------------------------------------------------------------------------"
 "-----------------------------------------------------------------------------------------------"
 

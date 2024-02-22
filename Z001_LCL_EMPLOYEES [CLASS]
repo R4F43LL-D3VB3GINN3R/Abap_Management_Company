@@ -63,13 +63,24 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
 
-      GOVERNAMENTAL_CONTRIBUTIONS "MÉTODO PARA CALCULAR OS IMPOSTOS PARA O GOVERNO."
-      IMPORTING
+      GOVERNAMENTAL_CONTRIBUTIONS       "MÉTODO PARA CALCULAR OS IMPOSTOS PARA O GOVERNO."
+      IMPORTING                         "IMPORTA O SALÁRIO BASE E CALCULA TODO O MONTANTE DE IMPOSTOS."
         LV_SAL     TYPE DECIMALS
       EXPORTING
-        DEDUCTIONS TYPE ZDEDUCTIONS
+        DEDUCTIONS TYPE ZDEDUCTIONS     "EXPORTA OS VALORES DOS IMPOSTOS INDIVIDUALMENTE."
         SECSOCIAL  TYPE ZSECSOCIAL
-        IRS        TYPE ZIRS.
+        IRS        TYPE ZIRS,
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      EMPLOYEE_OUT                       "MÉTODO PARA DEVITAR DO ORDENADO OS ATRASOS."
+      IMPORTING                          "IMPORTA OS ATRASOS E O SALÁRIO BASE."
+        NOPAYLEAVE TYPE ZNOPAYLEAVE
+        LV_SAL     TYPE DECIMALS
+      EXPORTING
+        DEDUCTIONS TYPE ZDEDUCTIONS.     "EXPORTA AS DEDUÇÕES SALARIAIS."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -266,9 +277,31 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
       "SE SALÁRIO BASE FOR MAIOR QUE "VALOR" E MENOR QUE "VALOR..."
       "AS DEDUÇÕES RECEBEM O IMPOSTO DA SEGURANÇA SOCIAL E DO IRS."
 
+  ENDMETHOD.
+
 "-----------------------------------------------------------------------------------------------"
 "-----------------------------------------------------------------------------------------------"
 
-  ENDMETHOD.
+  METHOD EMPLOYEE_OUT. "MÉTODO PARA DEVITAR DO ORDENADO OS ATRASOS."
+
+      "IMPORTA A QUANTIDADE DE FALTAS EM HORAS."
+      "IMPORTA O SALARIO BASE."
+
+      "EXPORTA AS DEDUCOES SALARIAIS."
+
+      DATA LV_HOURSLATE TYPE P DECIMALS 2. "VARIÁVEL LOCAL PARA ACUMULAR OS VALORES DOS ATRASOS."
+
+      IF NOPAYLEAVE > 0.                               "SE O VALOR DE ENTRADA FOR MAIOR DO QUE ZERO...
+        LV_HOURSLATE = LV_HOURSLATE * ( LV_SAL / 22 ). "A VARIÁVEL DE FALTAS RECEBE O VALOR DO INPUT VEZES O ORDENADO / 22"
+      ELSE.                                            "DO CONTRÁRIO...
+        LV_HOURSLATE = 0.                              "A VARIÁVEL RECEBE ZERO."
+      ENDIF.
+
+      DEDUCTIONS = DEDUCTIONS + LV_HOURSLATE. "ESTE VALOR É ADICIONADO AO VALOR DAS DEDUÇÕES SALARIAIS."
+
+    ENDMETHOD.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
 
 ENDCLASS.

@@ -16,23 +16,35 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
 
-      WORK_SHIFT                  "MÉTODO PARA CÁLCULO DO BONUS SALARIAL DEVIDO AO TURNO DE TRABALHO."
-      IMPORTING                   "IMPORTA  TURNO DE TRABALHO E O SALÁRIO BASE."
+      WORK_SHIFT                      "MÉTODO PARA CÁLCULO DO BONUS SALARIAL DEVIDO AO TURNO DE TRABALHO."
+      IMPORTING                       "IMPORTA  TURNO DE TRABALHO E O SALÁRIO BASE."
         WORKSHIFT TYPE ZWORKSHIFT
         LV_SAL TYPE DECIMALS
       EXPORTING
-        BONUS TYPE ZBONUS,        "EXPORTA O BONUS SALARIAL."
+        BONUS TYPE ZBONUS,            "EXPORTA O BONUS SALARIAL."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
 
-      EXTRAHOURS                  "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS E ACRESCÊ-LO AO SALÁRIO BRUTO"
-      IMPORTING                   "IMPORTA O SALÁRIO BASE E A QUANTIDADE DE HORAS EXTRAS."
+      EXTRAHOURS                      "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS E ACRESCÊ-LO AO SALÁRIO BRUTO"
+      IMPORTING                       "IMPORTA O SALÁRIO BASE E A QUANTIDADE DE HORAS EXTRAS."
         LV_SAL TYPE DECIMALS
         EXTRAHOUR TYPE ZEXTRAHOUR
       EXPORTING
-        BRUTESAL TYPE ZBRUTESAL.  "EXPORTA O SALÁRIO BRUTO."
+        BRUTESAL TYPE ZBRUTESAL,      "EXPORTA O SALÁRIO BRUTO."
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      HOLYDAYS_SUB                    "MÉTODO PARA CALCULAR SUBSÍDIO DÉCIMO E FÉRIAS."
+      IMPORTING                       "IMPORTA O SALÁRIO BRUTO, O BASE E A OPÇÃO CHECKED OU NÃO DO SUBSÍDIO."
+        BRUTESAL TYPE ZBRUTESAL
+        LV_SAL TYPE DECIMALS
+        SUBHOLYDAYS TYPE ZSUBHOLYDAYS
+      EXPORTING
+        LIQSAL TYPE ZLIQSAL.          "EXPORTA O SALÁRIO LÍQUIDO."
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -59,7 +71,14 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
 
 ENDCLASS.
 
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+
 CLASS CL_EMPLOYEES IMPLEMENTATION.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
 
   METHOD WORK_SHIFT. "MÉTODO PARA CALCULAR BONUS SALARIAL POR TURNO."
 
@@ -77,6 +96,9 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
     ENDIF.                                 "ENCERRA CONDIÇÃO."
 
   ENDMETHOD.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
 
   METHOD EXTRAHOURS. "MÉTODO PARA CALCULAR VALOR DAS HORAS EXTRAS.
 
@@ -100,5 +122,31 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
       BRUTESAL = LV_SAL + LV_VALHRS. "APROVEITAMOS E DIZEMOS QUE O SALÁRIO BRUTO RECEBE O SALÁRIO BASE + O VALOR DAS HORAS EXTRAS."
 
   ENDMETHOD.
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+
+  METHOD HOLYDAYS_SUB. "MÉTODO PARA CALCULAR SUBSÍDIO DÉCIMO E FÉRIAS."
+
+    "IMPORTA O SALÁRIO BRUTO."
+    "IMPORTA O SALÁRIO BASE."
+    "IMPORTA O VALOR CHECKED DO SUBSÍDIO."
+
+    "EXPORTA O SALÁRIO LÍQUIDO."
+
+    DATA: LV_YSDF TYPE ZLIQSAL. "É CRIADA UMA VARIÁVEL LOCAL PARA RECEBER O VALOR DO SUBSÍDIO"
+
+      IF SUBHOLYDAYS = 'X'.                    "SE OPTAR POR RECEBER O SUBSÍDIO MENSALMENTE...
+        LV_YSDF = LV_YSDF + ( BRUTESAL / 12 ). "A VARIÁVEL LOCAL RECEBE O SUBSÍDIO FÉRIAS + SUBSÍDIO DÉCIMO TERCEIRO"
+      ELSE.                                    "DO CONTRÁRIO...
+        LV_YSDF = 0.                           "A VARIÁVEL RECEBE ZERO.
+      ENDIF.
+
+      LIQSAL = LIQSAL + LV_YSDF. "AO FINAL DO CÁLCULO SE SOMA A VARIÁVEL AO SALÁRIO LÍQUIDO."
+
+    ENDMETHOD.
+    
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
 
 ENDCLASS.

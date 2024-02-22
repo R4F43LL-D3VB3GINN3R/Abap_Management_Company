@@ -8,4 +8,13 @@
 *----------------------------------------------------------------------*
 MODULE AFTER_PAYROLL INPUT.
 
+  CASE OKCODE400.
+    WHEN 'FCT_FIND400'.
+      SELECT SINGLE SALARY FROM ZEMPLOYEES001 INTO IN_SAL400 WHERE ID = IN_ID400.
+    WHEN 'FCT_BACK400'.
+      CALL SCREEN '200'.
+    WHEN 'FCT_EXIT400'.
+      LEAVE PROGRAM.
+   ENDCASE.
+
 ENDMODULE.

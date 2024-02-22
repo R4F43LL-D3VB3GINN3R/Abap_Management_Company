@@ -53,11 +53,23 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       SERVICES                         "MÉTODO PARA CALCULAR AS DESPESAS OU BONUS DE SERVIÇOS CONTRATADOS."
       IMPORTING                        "IMPORTA OS SERVICOS."
         HEALTHPLAN TYPE ZHEALTHPLAN
-        SINDICAL TYPE ZSINDICAL
-        TRANSPORT TYPE ZTRANSPORT
+        SINDICAL   TYPE ZSINDICAL
+        TRANSPORT  TYPE ZTRANSPORT
       EXPORTING
         DEDUCTIONS TYPE ZDEDUCTIONS    "EXPORTA A DEDUÇÃO SALARIAL E O BONUS."
-        BONUS TYPE ZBONUS.
+        BONUS      TYPE ZBONUS,
+
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+      "-----------------------------------------------------------------------------------------------"
+
+      GOVERNAMENTAL_CONTRIBUTIONS "MÉTODO PARA CALCULAR OS IMPOSTOS PARA O GOVERNO."
+      IMPORTING
+        LV_SAL     TYPE DECIMALS
+      EXPORTING
+        DEDUCTIONS TYPE ZDEDUCTIONS
+        SECSOCIAL  TYPE ZSECSOCIAL
+        IRS        TYPE ZIRS.
 
       "-----------------------------------------------------------------------------------------------"
       "-----------------------------------------------------------------------------------------------"
@@ -193,5 +205,70 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
 
 "-----------------------------------------------------------------------------------------------"
 "-----------------------------------------------------------------------------------------------"
+
+  METHOD GOVERNAMENTAL_CONTRIBUTIONS. "MÉTODO PARA CALCULAR OS IMPOSTOS PARA O GOVERNO."
+
+    "IMPORT O SALÁRIO BASE."
+
+    "EXPORTA AS DEDUÇÕES."
+    "EXPORTAO VALOR DA SEGURANÇA SOCIAL."
+    "EXPORTA O VALOR DO IRS".
+
+    IF LV_SAL < 886.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+      ELSEIF LV_SAL >= 886 AND LV_SAL < 932.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.06' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.06' * LV_SAL ).
+      ELSEIF LV_SAL >= 932 AND LV_SAL < 999.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.08' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.08' * LV_SAL ).
+      ELSEIF LV_SAL >= 999 AND LV_SAL < 1106.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.09' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.09' * LV_SAL ).
+      ELSEIF LV_SAL >= 1106 AND LV_SAL < 1600.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.11' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.11' * LV_SAL ).
+      ELSEIF LV_SAL >= 1600 AND LV_SAL < 1961.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.16' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.16' * LV_SAL ).
+      ELSEIF LV_SAL >= 1961 AND LV_SAL < 2529.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.19' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.19' * LV_SAL ).
+      ELSEIF LV_SAL >= 2529 AND LV_SAL < 3694.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.23' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.23' * LV_SAL ).
+      ELSEIF LV_SAL >= 3694 AND LV_SAL < 5469.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.28' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.28' * LV_SAL ).
+      ELSEIF LV_SAL >= 5469 AND LV_SAL < 6420.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.32' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.32' * LV_SAL ).
+      ELSEIF LV_SAL >= 6420 AND LV_SAL < 20064.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.33' * LV_SAL ).
+        SECSOCIAL = '0.11' * LV_SAL.
+        IRS = ( '0.33' * LV_SAL ).
+      ELSE.
+        DEDUCTIONS = DEDUCTIONS + ( '0.11' * LV_SAL ) + ( '0.41' * LV_SAL ).
+        SECSOCIAL = '0.011' * LV_SAL.
+        IRS = ( '0.41' * LV_SAL ).
+      ENDIF.
+
+      "SE SALÁRIO BASE FOR MAIOR QUE "VALOR" E MENOR QUE "VALOR..."
+      "AS DEDUÇÕES RECEBEM O IMPOSTO DA SEGURANÇA SOCIAL E DO IRS."
+
+"-----------------------------------------------------------------------------------------------"
+"-----------------------------------------------------------------------------------------------"
+
+  ENDMETHOD.
 
 ENDCLASS.

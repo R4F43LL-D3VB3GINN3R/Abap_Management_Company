@@ -25,7 +25,6 @@ JOB                   ZJOB             CHAR           15              Job Employ
 HIRING                ZHIRING          DATS           8               Date Hiring Emp
 PAYMENT               ZPAYMENT         CHAR           10              Payment Situation
 SALARY                ZSALARY          DEC            8               Current Salary
-WORKSHIFT             ZWORKSHIFT       CHAR           5               Work Shift
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  
 
@@ -47,5 +46,6 @@ IRS                     ZIRS             DEC            3               IRS
 BONUS                   ZBONUS           DEC            3               Bonus
 SUBHOLYDAYS             ZSUBHOLYDAYS     DEC            1               Holydays
 NOPAYLEAVE              ZNOPAYLEAVE      INT1           3               No Pay Leave
+WORKSHIFT               ZWORKSHIFT       CHAR           5               Work Shift
 ----------------------------------------------------------------------------------------  
 ----------------------------------------------------------------------------------------  

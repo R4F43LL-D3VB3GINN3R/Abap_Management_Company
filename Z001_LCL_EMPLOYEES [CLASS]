@@ -52,10 +52,11 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       "-----------------------------------------------------------------------------------------------"
 
       SERVICES                         "MÉTODO PARA CALCULAR AS DESPESAS OU BONUS DE SERVIÇOS CONTRATADOS."
-      IMPORTING                        "IMPORTA OS SERVICOS."
+      IMPORTING                        "IMPORTA OS SERVICOS E O SALÁRIO BASE."
         HEALTHPLAN TYPE ZHEALTHPLAN
         SINDICAL   TYPE ZSINDICAL
         TRANSPORT  TYPE ZTRANSPORT
+        LV_SAL     TYPE ZSALARY
       EXPORTING
         DEDUCTIONS TYPE ZDEDUCTIONS    "EXPORTA A DEDUÇÃO SALARIAL E O BONUS."
         BONUS      TYPE ZBONUS,
@@ -210,23 +211,33 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
     "EXPORTA AS DEDUÇÕES SALARIAIS."
     "EXPORTA O BONUS SALARIAL."
 
-      IF HEALTHPLAN = 'X'.                                                    "SE DECIDIR OPTAR POR UM PLANO DE SAÚDE PRIVADO...
-        DEDUCTIONS = DEDUCTIONS + ( ( 5 / 100 ) * LV_SAL ).                   "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
-      ELSE.                                                                   "DO CONTRÁRIO...
-        DEDUCTIONS = DEDUCTIONS.                                              "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
+    DATA: DEDUCTIONS2 TYPE ZDEDUCTIONS, "VARIÁVEL LOCAL."
+          DEDUCTIONS3 TYPE ZDEDUCTIONS. "VARIÁVEL LOCAL."
+
+    "AS VARIÁVEIS SÃO RESETADAS AO COMEÇO DO MÉTODO."
+    DEDUCTIONS = '0.0'.
+    DEDUCTIONS2 = '0.0'.
+    DEDUCTIONS3 = '0.0'.
+
+      IF HEALTHPLAN = 'X'.                                     "SE DECIDIR OPTAR POR UM PLANO DE SAÚDE PRIVADO...
+        DEDUCTIONS2 = DEDUCTIONS2 + ( ( 5 / 100 ) * LV_SAL ).  "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
+      ELSE.                                                    "DO CONTRÁRIO...
+        DEDUCTIONS2 = DEDUCTIONS2.                             "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
       ENDIF.
 
-      IF SINDICAL = 'X'.                                                      "SE DECIDIR OPTAR POR UMA CONTRIBUIÇÃO SINDICAL...
-        DEDUCTIONS = DEDUCTIONS + 4.                                          "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
-      ELSE.                                                                   "DO CONTRÁRIO...
-        DEDUCTIONS = DEDUCTIONS.                                              "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
+      IF SINDICAL = 'X'.                                       "SE DECIDIR OPTAR POR UMA CONTRIBUIÇÃO SINDICAL...
+        DEDUCTIONS3 = DEDUCTIONS3 + 4.                         "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DE DEDUÇÕES SALARIAIS.
+      ELSE.                                                    "DO CONTRÁRIO...
+        DEDUCTIONS3 = DEDUCTIONS3.                             "AS DEDUÇÕES SALARIAIS PERMANECEM AS MESMAS."
       ENDIF.
 
-      IF TRANSPORT = 'X'.                                                     "SE DECIDIR OPTAR TICKET TRANSPORTE...
-        BONUS = BONUS + '100.00'.                                             "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DOS BONUS SALARIAIS
-      ELSE.                                                                   "DO CONTRÁRIO...
-        BONUS = BONUS.                                                        "OS BONUS PERMANECEM OS MESMOS."
+      IF TRANSPORT = 'X'.                                      "SE DECIDIR OPTAR TICKET TRANSPORTE...
+        BONUS = BONUS + '100.00'.                              "O PREÇO DO PRODUTO É ACRESCIDO À VARIÁVEL DOS BONUS SALARIAIS
+      ELSE.                                                    "DO CONTRÁRIO...
+        BONUS = BONUS.                                         "OS BONUS PERMANECEM OS MESMOS."
       ENDIF.
+
+      DEDUCTIONS = DEDUCTIONS2 + DEDUCTIONS3. "A DEDUÇÃO SALARIAL RECEBE OS VALORES DOS PRODUTOS INSERIDOS.
 
   ENDMETHOD.
 

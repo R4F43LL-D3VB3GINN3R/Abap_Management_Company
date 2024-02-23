@@ -34,16 +34,16 @@ SALARY                ZSALARY          DEC            8               Current Sa
 [FIELD]     [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
 MANDT         X         MANDT            CLNT           3               Client
 ID            X         ZID              INT1           3               Id Employee
-BRUTESAL                ZBRUTESAL        DEC            3               Brute Salary
-LIQSAL                  ZLIQSAL          DEC            3               Liquid Salary
+BRUTESAL                ZBRUTESAL        DEC            6               Brute Salary
+LIQSAL                  ZLIQSAL          DEC            6               Liquid Salary
 HEALTHPLAN              ZHEALTHPLAN      CHAR           1               Health Plan
 SINDICAL                ZSINDICAL        CHAR           1               Sindical Services
 TRANSPORT               ZTRANSPORT       CHAR           1               Ticket Transport
-EXTRAHOUR               ZEXTRAHOUR       DEC            3               Extra Hour
-DEDUCTIONS              ZDEDUCTIONS      DEC            3               Deductions
-SECSOCIAL               ZSECOSCIAL       DEC            3               Security Social
-IRS                     ZIRS             DEC            3               IRS
-BONUS                   ZBONUS           DEC            3               Bonus
+EXTRAHOUR               ZEXTRAHOUR       INT1           3               Extra Hour
+DEDUCTIONS              ZDEDUCTIONS      DEC            6               Deductions
+SECSOCIAL               ZSECOSCIAL       DEC            6               Security Social
+IRS                     ZIRS             DEC            6               IRS
+BONUS                   ZBONUS           DEC            6               Bonus
 SUBHOLYDAYS             ZSUBHOLYDAYS     DEC            1               Holydays
 NOPAYLEAVE              ZNOPAYLEAVE      INT1           3               No Pay Leave
 WORKSHIFT               ZWORKSHIFT       CHAR           5               Work Shift

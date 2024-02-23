@@ -49,11 +49,28 @@ MODULE AFTER_PAYROLL INPUT.
 
       LO_CL_EMPLOYEES->GOVERNAMENTAL_CONTRIBUTIONS(
                         EXPORTING
-                          LV_SAL = IN_SALARY400
+                          LV_SAL     = IN_SALARY400
                         IMPORTING
                           DEDUCTIONS = IN_DEDUCTIONS400
                           SECSOCIAL  = IN_SECSOCIAL400
                           IRS        = IN_IRS400 ).
+
+      LO_CL_EMPLOYEES->EMPLOYEE_OUT(
+                        EXPORTING
+                          NOPAYLEAVE = IN_NOPAYLEAVE400
+                          LV_SAL     = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400 ).
+
+      LO_CL_EMPLOYEES->CALCULATE_SAL(
+                        EXPORTING
+                          BRUTESAL   = IN_BRUTESAL400
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          BONUS      = IN_BONUS400
+                        IMPORTING
+                          LIQSAL     = IN_LIQSAL400 ).
+
+
 
     WHEN 'FCT_BACK400'.
       CALL SCREEN '200'.

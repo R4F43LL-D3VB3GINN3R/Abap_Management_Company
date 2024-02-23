@@ -89,8 +89,8 @@ CLASS CL_EMPLOYEES DEFINITION FINAL.
       "-----------------------------------------------------------------------------------------------"
 
       CALCULATE_SAL                       "MÉTODO PARA CALCULAR O SALÁRIO LÍQUIDO."
-      IMPORTING                           "IMPORTA TRIBUTAÇÕES E BONUS."
-        LV_SAL TYPE ZSALARY
+      IMPORTING                           "IMPORTA TRIBUTAÇÕES, BONUS E SALÁRIO BRUTO."
+        BRUTESAL TYPE ZBRUTESAL
         DEDUCTIONS TYPE ZDEDUCTIONS
         BONUS TYPE ZBONUS
       EXPORTING
@@ -323,7 +323,7 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
       IF NOPAYLEAVE > 0.                                             "SE O VALOR DE ENTRADA FOR MAIOR DO QUE ZERO...
         LV_HOURSLATE = NOPAYLEAVE * ( LV_SAL / ( '8.0' * '22.0' ) ). "A VARIÁVEL DE FALTAS RECEBE O VALOR DO INPUT VEZES O ORDENADO / 22"
       ELSE.                                                          "DO CONTRÁRIO...
-        LV_HOURSLATE = 0.                                            "A VARIÁVEL RECEBE ZERO."
+        LV_HOURSLATE = '0.0'.                                        "A VARIÁVEL RECEBE ZERO."
       ENDIF.
 
       DEDUCTIONS = DEDUCTIONS + LV_HOURSLATE. "ESTE VALOR É ADICIONADO AO VALOR DAS DEDUÇÕES SALARIAIS."
@@ -341,7 +341,13 @@ CLASS CL_EMPLOYEES IMPLEMENTATION.
 
     "EXPORTA O SALÁRIO LÍQUIDO."
 
-    LIQSAL = ( LIQSAL + BRUTESAL + BONUS ) - DEDUCTIONS. "CÁLCULO BÁSICO PARA CONSTAR SALÁRIO FINAL."
+    DATA: LV_COUNT TYPE ZSALARY.
+
+    LV_COUNT = BRUTESAL + BONUS.
+
+    IF LV_COUNT > DEDUCTIONS.
+      LIQSAL = ( LIQSAL + BRUTESAL + BONUS ) - DEDUCTIONS. "CÁLCULO BÁSICO PARA CONSTAR SALÁRIO FINAL."
+    ENDIF.
 
   ENDMETHOD.
 

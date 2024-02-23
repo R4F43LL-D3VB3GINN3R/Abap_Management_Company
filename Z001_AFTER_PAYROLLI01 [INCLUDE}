@@ -16,12 +16,44 @@ MODULE AFTER_PAYROLL INPUT.
 
       LO_CL_EMPLOYEES->WORK_SHIFT(
                         EXPORTING
-                          LV_SAL = IN_SALARY400
+                          LV_SAL    = IN_SALARY400
                           WORKSHIFT = IN_WORKSHIFT400
                         IMPORTING
-                          BONUS  = IN_BONUS400 ).
+                          BONUS     = IN_BONUS400 ).
 
+      LO_CL_EMPLOYEES->EXTRAHOURS(
+                        EXPORTING
+                          LV_SAL    = IN_SALARY400
+                          EXTRAHOUR = IN_EXTRAHOUR400
+                          WORKSHIFT = IN_WORKSHIFT400
+                        IMPORTING
+                          BRUTESAL  = IN_BRUTESAL400 ).
 
+      LO_CL_EMPLOYEES->HOLYDAYS_SUB(
+                        EXPORTING
+                          BRUTESAL    = IN_BRUTESAL400
+                          LV_SAL      = IN_SALARY400
+                          SUBHOLYDAYS = CB_SUBHOLYDAYS400
+                        IMPORTING
+                          LIQSAL      = IN_LIQSAL400 ).
+
+      LO_CL_EMPLOYEES->SERVICES(
+                        EXPORTING
+                          HEALTHPLAN = CB_HEALTHPLAN400
+                          SINDICAL   = CB_SINDICAL400
+                          TRANSPORT  = CB_TRANSPORT400
+                          LV_SAL     = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          BONUS      = IN_BONUS400 ).
+
+      LO_CL_EMPLOYEES->GOVERNAMENTAL_CONTRIBUTIONS(
+                        EXPORTING
+                          LV_SAL = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          SECSOCIAL  = IN_SECSOCIAL400
+                          IRS        = IN_IRS400 ).
 
     WHEN 'FCT_BACK400'.
       CALL SCREEN '200'.

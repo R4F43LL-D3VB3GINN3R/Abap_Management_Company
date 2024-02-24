@@ -1,37 +1,124 @@
 *----------------------------------------------------------------------*
-***INCLUDE Z001_BEFORE_PAYROLLO01.
+***INCLUDE Z001_AFTER_PAYROLLI01.
 *----------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*& Module BEFORE_PAYROLL OUTPUT
+*&      Module  AFTER_PAYROLL  INPUT
 *&---------------------------------------------------------------------*
-*&
-*&---------------------------------------------------------------------*
-MODULE BEFORE_PAYROLL OUTPUT.
-* SET PF-STATUS 'xxxxxxxx'.
-* SET TITLEBAR 'xxx'.
+*       text
+*----------------------------------------------------------------------*
+MODULE AFTER_PAYROLL INPUT.
 
-  DATA: IN_ID400     TYPE ZID,        "ENTRADA RECEBE O VALOR DO ID DA TABELA TRANSPARENTE ZEMPLOYEES."
-        IN_SALARY400 TYPE ZSALARY.    "É EXPECTÁVEL QUE AQUI SEJA EXIBIDO O VALOR NESTA ENTRY."
+  CASE OKCODE400.                                                                    "CASO VARIÁVEL DE FUNÇÃO DE SISTEMA SEJA...
+    WHEN 'FCT_FIND400'.                                                              "QUANDO FOR ENCONTRAR...
+      SELECT SINGLE SALARY FROM ZEMPLOYEES001 INTO IN_SALARY400 WHERE ID = IN_ID400. "SELECIONA APENAS A COLUNA SALÁRIO DA TABELA TRANSPARENTE E INSIRA NA ENTRY ONDE O ID DA TABELA FOR IGUAL AO ID DA ENTRY.
+    WHEN 'FCT_REFRESH400'.                                                           "QUANDO FOR REFRESH...
+      CREATE OBJECT LO_CL_EMPLOYEES.                                                 "CRIA UM OBJETO DE CLASSE...
 
-  DATA: LV_WORKSHIFT400 TYPE ZWORKSHIFT. "VARIÁVEL PARA PEGAR O TURNO DE TRABALHO DO EMPREGADO EM OUTRA TABELA TRANSPARENTE."
+      LO_CL_EMPLOYEES->WORK_SHIFT(                        "INVOCA O MÉTODO PARA CALCULAR O BONUS NOTURNO."
+                        EXPORTING
+                          LV_SAL    = IN_SALARY400
+                          WORKSHIFT = IN_WORKSHIFT400
+                        IMPORTING
+                          BONUS     = IN_BONUS400 ).
 
-  "OS ELEMENTOS DE TELA IRÃO RECEBER OS TIPOS DE DADOS DA MINHA TABELA TRANSPARENTE."
+      LO_CL_EMPLOYEES->EXTRAHOURS(                        "INVOCA O MÉTODO PARA CÁLCULO DE HORAS EXTRAS."
+                        EXPORTING
+                          LV_SAL    = IN_SALARY400
+                          EXTRAHOUR = IN_EXTRAHOUR400
+                          WORKSHIFT = IN_WORKSHIFT400
+                        IMPORTING
+                          BRUTESAL  = IN_BRUTESAL400 ).
 
-  DATA: IN_BRUTESAL400    TYPE ZBRUTESAL,    "SALÁRIO BRUTO."
-        IN_LIQSAL400      TYPE ZLIQSAL,      "SALÁRIO LÍQUIDO."
-        CB_HEALTHPLAN400  TYPE ZHEALTHPLAN,  "PLANO DE SAÚDE."
-        CB_SINDICAL400    TYPE ZSINDICAL,    "CONTRIBUIÇÃO SINDICAL."
-        CB_TRANSPORT400   TYPE ZTRANSPORT,   "TICKET TRANSPORTE."
-        CB_SUBHOLYDAYS400 TYPE ZSUBHOLYDAYS, "SUBSÍDIO DÉCIMO E FÉRIAS."
-        IN_EXTRAHOUR400   TYPE ZEXTRAHOUR,   "QUANTIDADE DE HORAS EXTRAS."
-        IN_DEDUCTIONS400  TYPE ZDEDUCTIONS,  "DEDUÇÕES SALARIAIS."
-        IN_SECSOCIAL400   TYPE ZSECSOCIAL,   "SEGURANÇA SOCIAL."
-        IN_IRS400         TYPE ZIRS,         "IRS."
-        IN_BONUS400       TYPE ZBONUS,       "BONUS SALARIAL."
-        IN_NOPAYLEAVE400  TYPE ZNOPAYLEAVE,  "HORAS EM FALTA."
-        IN_WORKSHIFT400   TYPE ZWORKSHIFT.   "TURNO DE TRABALHO."
+      LO_CL_EMPLOYEES->HOLYDAYS_SUB(                      "INVOCA O MÉTODO PARA CALCULAR SUBSÍDIO DÉCIMO E FÉRIAS."
+                        EXPORTING
+                          BRUTESAL    = IN_BRUTESAL400
+                          LV_SAL      = IN_SALARY400
+                          SUBHOLYDAYS = CB_SUBHOLYDAYS400
+                        IMPORTING
+                          LIQSAL      = IN_LIQSAL400 ).
 
-  DATA: LO_CL_EMPLOYEES TYPE REF TO CL_EMPLOYEES. "INSTÂNCIA DA MINHA CLASSE."
-  DATA: LV_REFRESH_DONE TYPE FLAG.                "FLAG PRA INDICAR SE CORREU TUDO BEM COM O SISTEMA."
+      LO_CL_EMPLOYEES->SERVICES(                           "INVOCA O MÉTODO PARA CALCULAR OS SERVIÇOS ESCOLHIDOS PELO FUNCIONÁRIO."
+                        EXPORTING
+                          HEALTHPLAN = CB_HEALTHPLAN400
+                          SINDICAL   = CB_SINDICAL400
+                          TRANSPORT  = CB_TRANSPORT400
+                          LV_SAL     = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          BONUS      = IN_BONUS400 ).
+
+      LO_CL_EMPLOYEES->GOVERNAMENTAL_CONTRIBUTIONS(         "INVOCA O MÉTODO PARA CALCULAR OS IMPOSTOS TRIBUTÁRIOS."
+                        EXPORTING
+                          LV_SAL     = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          SECSOCIAL  = IN_SECSOCIAL400
+                          IRS        = IN_IRS400 ).
+
+      LO_CL_EMPLOYEES->EMPLOYEE_OUT(                        "INVOCA O MÉTODO PARA CALCULAR AS HORAS PENDENTES."
+                        EXPORTING
+                          NOPAYLEAVE = IN_NOPAYLEAVE400
+                          LV_SAL     = IN_SALARY400
+                        IMPORTING
+                          DEDUCTIONS = IN_DEDUCTIONS400 ).
+
+      LO_CL_EMPLOYEES->CALCULATE_SAL(                       "INVOCA O MÉTODO PARA CALCULAR O SALÁRIO LÍQUIDO."
+                        EXPORTING
+                          BRUTESAL   = IN_BRUTESAL400
+                          DEDUCTIONS = IN_DEDUCTIONS400
+                          BONUS      = IN_BONUS400
+                        IMPORTING
+                          LIQSAL     = IN_LIQSAL400 ).
+
+      IF SY-SUBRC = 0 AND IN_LIQSAL400 >= 700. "SE A INSTRUÇÃO FOI EXECUTADA COM SUCESSO E O SALÁRIO LÍQUIDO FOR MAIOR OU IGUAL A 700...
+        LV_REFRESH_DONE = 'X'.                 "A FLAG RECEBE TRUE."
+      ELSE.                                    "DO CONTRÁRIO..."
+        LV_REFRESH_DONE = ''.                  "A FLAG CONTINUA RECEBENDO FALSE."
+      ENDIF.                                   "ENCERRA A CONDIÇÃO."
+
+    WHEN 'FCT_GENERATE400'.                                        "QUANDO FOR GERAR O PAGAMENTO."
+
+      IF LV_REFRESH_DONE EQ 'X'.                                   "SE A MINHA FLAG ESTIVER RECEBENDO TRUE...
+
+        DATA: LS_EMP400   TYPE ZPAYROLL,                           "ESTRUTURA LOCAL DA TABELA TRANSPARENTE."
+              LS_EMP400_2 TYPE ZEMPLOYEES001,                      "ESTRUTURA LOCAL DA TABELA TRANSPARENTE."
+              LT_EMP400_2 TYPE TABLE OF ZEMPLOYEES001,             "TABELA INTERNA DA TABELA TRANSPARENTE."
+              LT_EMP400   TYPE TABLE OF ZPAYROLL,                  "TABELA INTERNA DA TABELA TRANSPARENTE."
+              LV_PAYMENT  TYPE ZPAYMENT.                           "VARIÁVEL LOCAL."
+
+        LV_PAYMENT = 'OK'.                                         "STATUS DE PAGAMENTO RECEBE OK."
+
+        SELECT * FROM ZPAYROLL INTO TABLE LT_EMP400.               "INSIRA TODOS OS DADOS DA TABELA TRANSPARENTE NA TABELA INTERNA."
+        SELECT * FROM ZEMPLOYEES001 INTO TABLE LT_EMP400_2.        "INSIRA TODOS OS DADOS DA TABELA TRANSPARENTE NA TABELA INTERNA."
+
+        LS_EMP400-ID          = IN_ID400.                          "ESTRUTURA LOCAL PREENCHIDA COM O VALOR RECEBIDOS DAS ENTRIES."
+        LS_EMP400-BRUTESAL    = IN_BRUTESAL400.
+        LS_EMP400-LIQSAL      = IN_LIQSAL400.
+        LS_EMP400-HEALTHPLAN  = CB_HEALTHPLAN400.
+        LS_EMP400-SINDICAL    = CB_SINDICAL400.
+        LS_EMP400-TRANSPORT   = CB_TRANSPORT400.
+        LS_EMP400-EXTRAHOUR   = IN_EXTRAHOUR400.
+        LS_EMP400-DEDUCTIONS  = IN_DEDUCTIONS400.
+        LS_EMP400-SECSOCIAL   = IN_SECSOCIAL400.
+        LS_EMP400-IRS         = IN_IRS400.
+        LS_EMP400-BONUS       = IN_BONUS400.
+        LS_EMP400-SUBHOLYDAYS = CB_SUBHOLYDAYS400.
+        LS_EMP400-NOPAYLEAVE  = IN_NOPAYLEAVE400.
+        LS_EMP400-WORKSHIFT   = IN_WORKSHIFT400.
+
+        APPEND LS_EMP400 TO LT_EMP400.                                      "INSERE A ESTRUTURA NUMA TABELA INTERNA."
+        MODIFY ZPAYROLL FROM TABLE LT_EMP400.                               "MODIFICA A TABELA TRANSPARENTE A PARTIR DA TABELA INTERNA ATUALIZADA."
+        UPDATE ZEMPLOYEES001 SET PAYMENT = LV_PAYMENT WHERE ID = IN_ID400.  "ATUALIZA O STATUS DE PAGAMENTO NA OUTRA TABELA TRANSPARENTE."
+        UPDATE ZEMPLOYEES001 SET ID_PAYROLL = IN_ID400 WHERE ID = IN_ID400. "VINCULA A CHAVE ESTRANGEIRA À CHAVE DA TABELA DE PAGAMENTO."
+
+      ELSE.                                                                 "DO CONTRÁRIO...
+        MESSAGE |'NO DATA TO GENERATE PAYMENT | TYPE 'S' DISPLAY LIKE 'I'.  "EXIBE MENSAGEM."
+      ENDIF.                                                                "ENCERRA A CONDIÇÃO."
+
+    WHEN 'FCT_BACK400'.  "QUANDO APERTAR O BOTÃO DE VOLTAR...
+      CALL SCREEN '200'. "VAI PARA A TELA 200."
+    WHEN 'FCT_EXIT400'.  "QUANDO APERTAR O BOTÃO DE SAIR...
+      LEAVE PROGRAM.     "ENCERRA O PROGRAMA."
+   ENDCASE.              "ENCERRA A CONDIÇÃO."
 
 ENDMODULE.
